@@ -55,3 +55,10 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Mac
+**/.DS_Store
+
+# Dynamic static files folders
+static/qr_code/* 
+static/game_config/*
