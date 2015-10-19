@@ -12,7 +12,9 @@ import ConfigParser
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
 
-config_path = './config.conf'
+root_path = os.path.split(os.path.realpath(__file__))[0] + '/'
+
+config_path = root_path + './config.conf'
 
 config = ConfigParser.ConfigParser()
 config.read(config_path)
@@ -32,8 +34,6 @@ mongo_client = pymongo.MongoClient(mongo_uri)
 db = mongo_client[mongo_dbname]
 bots_collection = db.bots
 configs_collection = db.botconfigs
-
-root_path = os.path.split(os.path.realpath(__file__))[0] + '/'
 
 def close_bot(process_id, with_kill = True):
     if not isinstance(process_id, ObjectId): process_id = ObjectId(process_id)
