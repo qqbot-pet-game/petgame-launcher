@@ -59,6 +59,8 @@ target/
 # Mac
 **/.DS_Store
 
+# Config file
+config.conf
 # Dynamic static files folders
 static/qr_code/* 
 static/game_config/*
