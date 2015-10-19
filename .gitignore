@@ -61,7 +61,7 @@ target/
 
 # Config file
 config.conf
-static/game_config_tpl.tpl.json
+static/game_config_tpl.json
 # Dynamic static files folders
 /static/qr_code/*
 /static/game_config/*
