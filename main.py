@@ -75,7 +75,7 @@ class Launch:
         qr_code_file_url = '/static/qr_code/{0}.jpg'.format(_uuid)
         config_file_path = os.path.realpath(root_path + './' + config_file_url)
         qrcode_file_path = os.path.realpath(root_path + './' + qr_code_file_url)
-        config_tpl_path = os.path.realpath(root_path + './static/game_config_tpl.json')
+        config_tpl_path = os.path.realpath(config.get('qqbot', 'path') + '/./config/game_config.json')
         config_file = open(config_file_path, 'w')
         config_tpl_file = open(config_tpl_path, 'r')
         config_file.write(config_tpl_file.read())
