@@ -8,6 +8,7 @@ import uuid
 import pymongo
 from bson.objectid import ObjectId
 import ConfigParser
+import traceback
 
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
@@ -120,7 +121,7 @@ class Launch:
                         bot_loop(bot, bot_handler)
                 except Exception, e:
                     print "bot error, bot id: ", str(process_record['_id'])
-                    print e
+                    print traceback.format_exc()
                 print "[CLOSE] bot id: ", str(process_record['_id'])
                 close_bot(process_record['_id'])
             else:
