@@ -9,6 +9,7 @@ import pymongo
 from bson.objectid import ObjectId
 import ConfigParser
 import traceback
+import random
 
 # reload(sys)
 # sys.setdefaultencoding("utf-8")
@@ -25,6 +26,10 @@ mongo_port = int(config.get('mongodb', 'port'))
 mongo_username = config.get('mongodb', 'username')
 mongo_password = config.get('mongodb', 'password')
 mongo_dbname = config.get('mongodb', 'db')
+
+port_range = config.get('qqbot', 'port').split('-')
+port_min = int(port_range[0])
+port_max = int(port_range[1])
 
 # qqbot_path = config.get('qqbot', 'path') + '/main.py'
 sys.path.append(config.get('qqbot', 'path'))
@@ -71,6 +76,8 @@ class Status:
 
 class Launch:
     def GET(self):
+        inputdata = web.input()
+        qq_code = inputdata.qq
         _uuid = str(uuid.uuid1())
         config_file_url = '/static/game_config/{0}.json'.format(_uuid)
         qr_code_file_url = '/static/qr_code/{0}.jpg'.format(_uuid)
@@ -93,10 +100,19 @@ class Launch:
                 if process_record: break
             if process_record:
                 # os.system('python {0} -c {1} -q {2}'.format(qqbot_path, config_file_path, qrcode_file_path))
+                port_mojo = port_min + int((port_max - port_min) * random.random())
+                port_report = port_mojo
+                while port_report == port_mojo:
+                    port_report = port_min + int((port_max - port_min) * random.random())
                 bot_params['config_path'] = config_file_path
                 bot_params['qrcode_path'] = qrcode_file_path
                 bot_params['debug'] = False
                 bot_params['login_retry_time'] = 1
+                bot_params['mojo_port'] = port_mojo
+                bot_params['report_port'] = port_report
+                bot_params['qq_code'] = int(qq_code)
+                print port_mojo
+                print port_report
                 try:
                     (bot, bot_handler) = bot_launch(bot_params)
                     print "login finished, bot id: ", str(process_record['_id'])
@@ -156,13 +172,13 @@ class Gnamelist:
         if process_record and 'gnames' in process_record and isinstance(process_record['gnames'], list):
             gnamelist = process_record['gnames']
         else:
-            iter_time_limit = 60
+            iter_time_limit = 600
             for i in range(0, iter_time_limit):
                 process_record = bots_collection.find_one({'_id': ObjectId(inputdata.id), 'account': {'$exists': True}})
                 if process_record and 'gnames' in process_record and isinstance(process_record['gnames'], list):
                     gnamelist = process_record['gnames']
                     break
-                if i < iter_time_limit: time.sleep(1)
+                if i < iter_time_limit: time.sleep(0.1)
         if gnamelist: return json.dumps({'status': 0, 'data': gnamelist})
         else: return json.dumps({'status': 1})
 
@@ -174,13 +190,13 @@ class Config:
         if process_record and 'config_file_path' in process_record:
             config_file_path = process_record['config_file_path']
         else:
-            iter_time_limit = 60
+            iter_time_limit = 600
             for i in range(0, iter_time_limit):
                 process_record = bots_collection.find_one({'_id': ObjectId(inputdata.id), 'account': {'$exists': True}})
                 if process_record and 'config_file_path' in process_record:
                     config_file_path = process_record['config_file_path']
                     break
-                if i < iter_time_limit: time.sleep(1)
+                if i < iter_time_limit: time.sleep(0.1)
         if config_file_path:
             config_file_obj = open(config_file_path)
             config_obj = json.load(config_file_obj)
